@@ -1,0 +1,35 @@
+import threading
+import time
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.contrib.auth.models import User
+
+# First receiver function
+@receiver(post_save, sender=User)
+def receiver_1(sender, instance, **kwargs):
+    print("Receiver 1 started")
+    print("Receiver 1 thread ID:", threading.get_ident())
+    time.sleep(2)
+    print("Receiver 1 finished")
+
+# Second receiver function
+@receiver(post_save, sender=User)
+def receiver_2(sender, instance, **kwargs):
+    print("Receiver 2 started")
+    print("Receiver 2 thread ID:", threading.get_ident())
+    time.sleep(2)
+    print("Receiver 2 finished")
+
+# Simulate saving a User instance
+user = User(username='testuser')
+print("Main thread ID:", threading.get_ident())
+user.save()
+
+# Output:
+# Main thread ID: 15798723827327
+# Receiver 1 started
+# Receiver 1 thread ID: 15798723827327
+# Receiver 1 finished
+# Receiver 2 started
+# Receiver 2 thread ID: 15798723827327
+# Receiver 2 finished
