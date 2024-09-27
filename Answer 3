@@ -1,0 +1,36 @@
+import threading
+import time
+from django.db import transaction
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.contrib.auth.models import User
+
+# Receiver function
+@receiver(post_save, sender=User)
+def receiver_1(sender, instance, **kwargs):
+    print("Receiver 1 started")
+    print("Receiver 1 thread ID:", threading.get_ident())
+    time.sleep(2)
+    print("Receiver 1 finished")
+
+# Simulate saving a User instance within a transaction
+def create_user_with_transaction():
+    with transaction.atomic():
+        user = User(username='testuser')
+        print("Main thread ID:", threading.get_ident())
+        user.save()
+        # Simulate an error to rollback the transaction
+        raise Exception("Simulated error")
+
+#try and except block is used to handle exceptions in the code
+
+try:
+    create_user_with_transaction()
+except Exception as e:
+    print(f"Transaction rolled back due to: {e}")
+
+
+# Output:
+# Main thread ID: 15798723827327
+# (No output from receiver_1 because the transaction was rolled back)
+
