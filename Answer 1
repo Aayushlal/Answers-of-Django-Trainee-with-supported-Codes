@@ -23,3 +23,9 @@ user.save()
 
 # After running the code snippet, this is found that receiver_1 will start first and when it is finished then receiver_2 will start.
 # Thus it proves that django signals are executed Synchronously.
+
+# Expected output:
+# Receiver 1 started
+# Receiver 1 finished
+# Receiver 2 started
+# Receiver 2 finished
