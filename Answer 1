@@ -1,0 +1,25 @@
+import time
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.contrib.auth.models import User
+
+# First receiver function
+@receiver(post_save, sender=User)
+def receiver_1(sender, instance, **kwargs):
+    print("Receiver 1 started")
+    time.sleep(2)  
+    print("Receiver 1 finished")
+
+# Second receiver function
+@receiver(post_save, sender=User)
+def receiver_2(sender, instance, **kwargs):
+    print("Receiver 2 started")
+    time.sleep(2) 
+    print("Receiver 2 finished")
+
+# Simulate saving a User instance
+user = User(username='testuser')
+user.save()
+
+# After running the code snippet, this is found that receiver_1 will start first and when it is finished then receiver_2 will start.
+# Thus it proves that django signals are executed Synchronously.
